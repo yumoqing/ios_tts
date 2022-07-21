@@ -7,17 +7,17 @@ except ImportError:
 #	long_description = f.read()
 
 setup(
-	name='android_tts',
-	packages=['android_tts'],
+	name='ios_tts',
+	packages=['ios_tts'],
 	version='0.0.1',
-	description='a pyttsx3 driver for android device, it use android.speech.tts.',
+	description='a pyttsx3 driver for ios device, it use AVFoundation.AVSpeechSynthesizer',
 	long_description='',
-	summary='pyttsx3 driver for android device',
+	summary='pyttsx3 driver for ios device',
 	author='Yu Moqing',
-	url='https://github.com/yumoqing/android_tts',
+	url='https://github.com/yumoqing/ios_tts',
 	author_email='yumoqing@gmail.com',
 	# install_requires=install_requires ,
-	keywords=['pyttsx' , 'android', 'offline tts engine'],
+	keywords=['pyttsx' , 'ios', 'offline tts engine'],
 	classifiers = [
 		  'Intended Audience :: End Users/Desktop',
 		  'Intended Audience :: Developers',
