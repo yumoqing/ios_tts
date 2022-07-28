@@ -14,13 +14,14 @@ AVSpeechSynthesisVoice = autoclass('AVSpeechSynthesisVoice')
 NSURL = autoclass('NSURL')
 
 from text2sentences import text_to_sentences
+from .version import __version__
 
 def get_locale_by_language(lang):
 	locales = {
 		'zh':'zh-CN',
 		'en':'en-US',
 		'tr':'tr-TR',
-		'th':'th-TH,
+		'th':'th-TH',
 		'sv':'sv-SE',
 		'es':'es-ES',
 		'sk':'sk-SK',
@@ -46,11 +47,11 @@ def get_locale_by_language(lang):
 	return locales.get(lang, None)
 
 def buildDriver(proxy, **kw):
-    # return NSSpeechDriver.alloc().initWithProxy(proxy)
-    return SpeechDriver(proxy, **kw)
+	# return NSSpeechDriver.alloc().initWithProxy(proxy)
+	return SpeechDriver(proxy, **kw)
 
 class SpeechDriver:
-    def __init__(self, proxy, **kw):
+	def __init__(self, proxy, **kw):
 		self._proxy = proxy
 		self._tts = AVSpeechSynthesizer.alloc().init()
 		self._tts.setDelegate_(self)
@@ -72,13 +73,13 @@ class SpeechDriver:
 		self._tts.continueSpeaking()
 
 	def stop(self):
-        if self._proxy.isBusy():
-            self._completed = False
+		if self._proxy.isBusy():
+			self._completed = False
 		self._tts.stopSpeakingAtBoundary()
 
 	def say(self, text):
-        self._proxy.setBusy(True)
-        self._completed = True
+		self._proxy.setBusy(True)
+		self._completed = True
 		self.sentences += text_to_sentences(text)
 
 	def set_utterances_by_sentence(self, utterance, sentence):
@@ -102,12 +103,12 @@ class SpeechDriver:
 		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance(utterance)
 
-    def destroy(self):
-        self._tts.setDelegate_(None)
-        del self._tts
+	def destroy(self):
+		self._tts.setDelegate_(None)
+		del self._tts
 
-    def startLoop(self):
-        self._proxy.notify('started-utterance')
+	def startLoop(self):
+		self._proxy.notify('started-utterance')
 		speak_next_sentence()
 
 	def speak_next_sentence(self):
@@ -121,71 +122,71 @@ class SpeechDriver:
 								completed=self._completed)
 			self._proxy.setBusy(False)
 			
-    def endLoop(self):
+	def endLoop(self):
 		self.speaking_sentence = None
 
-    def iterate(self):
-        self._proxy.setBusy(False)
-        yield
+	def iterate(self):
+		self._proxy.setBusy(False)
+		yield
 
-    def getProperty(self, name):
-        if name == 'voices':
-            return self.get_all_language()
-        elif name == 'voice':
-            return self.voice
-        elif name == 'rate':
-            return None
-        elif name == 'volume':
-            return None
-        elif name == "pitch":
-            print("Pitch adjustment not supported when using NSSS")
-        else:
-            raise KeyError('unknown property %s' % name)
+	def getProperty(self, name):
+		if name == 'voices':
+			return self.get_all_language()
+		elif name == 'voice':
+			return self.voice
+		elif name == 'rate':
+			return None
+		elif name == 'volume':
+			return None
+		elif name == "pitch":
+			print("Pitch adjustment not supported when using NSSS")
+		else:
+			raise KeyError('unknown property %s' % name)
 
-    def setProperty(self, name, value):
+	def setProperty(self, name, value):
 		return
-        if name == 'voice':
-            # vol/rate gets reset, so store and restore it
+		if name == 'voice':
+			# vol/rate gets reset, so store and restore it
 			self.voice = value
-        elif name == 'rate':
-            self._tts.setRate_(value)
-        elif name == 'volume':
-            self._tts.setVolume_(value)
-        elif name == 'pitch':
-            print("Pitch adjustment not supported when using NSSS")
-        else:
-            raise KeyError('unknown property %s' % name)
+		elif name == 'rate':
+			self._tts.setRate_(value)
+		elif name == 'volume':
+			self._tts.setVolume_(value)
+		elif name == 'pitch':
+			print("Pitch adjustment not supported when using NSSS")
+		else:
+			raise KeyError('unknown property %s' % name)
 
 	def get_all_language(self):
 		langs = AVSpeechSynthesisVoice.speechVoices()
 		return langs
 
-    def save_to_file(self, text, filename):
-        url = NSURL.fileURLWithPath_(filename)
-        self._tts.startSpeakingString_toURL_(text, url)
+	def save_to_file(self, text, filename):
+		url = NSURL.fileURLWithPath_(filename)
+		self._tts.startSpeakingString_toURL_(text, url)
 
 	@protocol('AVSpeechSynthesisDelegate')
-    def speechSynthesizer_didCancelSpeechUtterance_(self, *args):
+	def speechSynthesizer_didCancelSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
 	@protocol('AVSpeechSynthesisDelegate')
-    def speechSynthesizer_didContinueSpeechUtterance_(self, *args):
+	def speechSynthesizer_didContinueSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
 	@protocol('AVSpeechSynthesisDelegate')
-    def speechSynthesizer_didPauseSpeechUtterance_(self, *args):
+	def speechSynthesizer_didPauseSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
 	@protocol('AVSpeechSynthesisDelegate')
-    def speechSynthesizer_didStartSpeechUtterance_(self, *args):
+	def speechSynthesizer_didStartSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
 	@protocol('AVSpeechSynthesisDelegate')
-    def speechSynthesizer_didFinishSpeechUtterance_(self, *args):
+	def speechSynthesizer_didFinishSpeechUtterance_(self, *args):
 		print('args=', args)
 		if self.speaking_sentence.semi_sentenece:
 			time.sleep(self.simi_stop_period)
