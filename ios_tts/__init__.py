@@ -1,9 +1,9 @@
+import time
 from pyobjus import autoclass, protocol
 from pyobjus.dylib_manager import load_framework, INCLUDE
 load_framework(INCLUDE.AVFoundation)
 load_framework('/System/Library/Frameworks/AppKit.framework')
 load_framework('/System/Library/Frameworks/Foundation.framework')
-from pyttsx3.voice import Voice
 NSTimer = autoclass('NSTimer')
 NSString = autoclass('NSString')
 NSArray = autoclass('NSArray')
@@ -14,6 +14,36 @@ AVSpeechSynthesisVoice = autoclass('AVSpeechSynthesisVoice')
 NSURL = autoclass('NSURL')
 
 from text2sentences import text_to_sentences
+
+def get_locale_by_language(lang):
+	locales = {
+		'zh':'zh-CN',
+		'en':'en-US',
+		'tr':'tr-TR',
+		'th':'th-TH,
+		'sv':'sv-SE',
+		'es':'es-ES',
+		'sk':'sk-SK',
+		'ru':'ru-RU',
+		'ro':'ro-RO',
+		'pt':'pt-PT',
+		'pl':'pl-PL',
+		'no':'no-NO',
+		'ko':'ko-KO',
+		'ja':'ja-JP',
+		'it':'it-IT',
+		'id':'id-ID',
+		'hu':'hu-HU',
+		'hi':'hi-IN',
+		'el':'el-GR',
+		'de':'de-DE',
+		'fr':'fr-FR',
+		'nl':'nl-NL',
+		'da':'da-DK',
+		'cs':'cs-CZ',
+		'ar':'ar-SA'
+	}
+	return locales.get(lang, None)
 
 def buildDriver(proxy, **kw):
     # return NSSpeechDriver.alloc().initWithProxy(proxy)
@@ -28,6 +58,7 @@ class SpeechDriver:
 		self.rate = 180
 		self.set_stop_period()
 		self.voice = None
+		self.speaking_sentence = None
 
 	def set_stop_period(self):
 		r = 1.0 / float(self.rate)
@@ -50,13 +81,25 @@ class SpeechDriver:
         self._completed = True
 		self.sentences += text_to_sentences(text)
 
-	def set_utterences_by_sentence(self, utterence, sentence):
+	def set_utterances_by_sentence(self, utterance, sentence):
 		if sentence.dialog:
-			utterence.pitchModifier = 1.25
+			utterance.pitchModifier = 1.25
+		else:
+			utterance.pitchModifier = 1.0
+		locale = get_local_by_language(sentence.lang)
+		voice = AVSpeechSynthesisVoice.voiceWithLanguage(locale)
+		utterance.voice = voice
+		utterance.rate = self.rate
+
+	def isBusy(self):
+		if self.speaking_sentence:
+			return True
+		else:
+			return False
 
 	def speak_sentence(self, sentence):
 		utterance = AVSpeechUtterance.alloc().initWithString(sentence.text)
-		self.set_utterences_by_sentence(utterence, sentence)
+		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance(utterance)
 
     def destroy(self):
@@ -73,24 +116,17 @@ class SpeechDriver:
 			self.speak_sentence(self.speaking_sentence)
 		else:
 			sself.speaking_sentence = None
-			self._proxy.notify('finished-utterance', completed=success)
+			self._completed = True
+			self._proxy.notify('finished-utterance', 
+								completed=self._completed)
+			self._proxy.setBusy(False)
 			
-
     def endLoop(self):
 		self.speaking_sentence = None
 
     def iterate(self):
         self._proxy.setBusy(False)
         yield
-
-    def _toVoice(self, attr):
-        try:
-            lang = attr['VoiceLocaleIdentifier']
-        except KeyError:
-            lang = attr['VoiceLanguage']
-        return Voice(attr['VoiceIdentifier'], attr['VoiceName'],
-                     [lang], attr['VoiceGender'],
-                     attr['VoiceAge'])
 
     def getProperty(self, name):
         if name == 'voices':
@@ -151,13 +187,12 @@ class SpeechDriver:
 	@protocol('AVSpeechSynthesisDelegate')
     def speechSynthesizer_didFinishSpeechUtterance_(self, *args):
 		print('args=', args)
-		self.speak_next_utterence()
+		if self.speaking_sentence.semi_sentenece:
+			time.sleep(self.simi_stop_period)
+		else:
+			time.sleep(self.sentence_stop_period)
+		self.speak_next_utterance()
 		return
-        if not self._completed:
-            success = False
-        else:
-            success = True
-        self._proxy.setBusy(False)
 
 	@protocol('AVSpeechSynthesisDelegate')
 	def speechSynthesizer_willSpeakRangeOfSpeechString_(self, *args):
