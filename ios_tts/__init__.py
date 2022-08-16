@@ -1,4 +1,6 @@
 import time
+from unitts.basedriver import BaseDriver
+from unitts.voice import Voice
 from pyobjus import autoclass, protocol
 from pyobjus.dylib_manager import load_framework, INCLUDE
 load_framework(INCLUDE.AVFoundation)
@@ -16,7 +18,7 @@ NSURL = autoclass('NSURL')
 from text2sentences import text_to_sentences
 from .version import __version__
 
-def get_locale_by_language(lang):
+def language_by_lang(lang):
 	locales = {
 		'zh':'zh-CN',
 		'en':'en-US',
@@ -47,19 +49,57 @@ def get_locale_by_language(lang):
 	return locales.get(lang, None)
 
 def buildDriver(proxy, **kw):
-	# return NSSpeechDriver.alloc().initWithProxy(proxy)
-	return SpeechDriver(proxy, **kw)
+	return IOSSpeechDriver(proxy, **kw)
 
-class SpeechDriver:
+class IOSSpeechDriver(BaseDriver):
 	def __init__(self, proxy, **kw):
-		self._proxy = proxy
+		sper().__init__(proxy)
 		self._tts = AVSpeechSynthesizer.alloc().init()
-		self._tts.setDelegate_(self)
+		self._tts.delegate = self
+		self.rate = 200
+		self.volume = 1
 		self._completed = True
 		self.rate = 180
 		self.set_stop_period()
 		self.voice = None
+		print(f'IOSTTS driver version {__version__}')
 		self.speaking_sentence = None
+
+	def get_voice_by_lang(self, lang):
+		for v in self.voices:
+			x = map(lambda:x lang==x[:len(lang)], v.languages)
+			if True in x:
+				default_language = language_by_lang(lang)
+				if default_voice is None:
+					return v.id
+				if default_language in v.languages:
+					return v.id
+		raise Exception(f'{lang} is not supported language')
+			
+	def get_voices(self):
+		langs = AVSpeechSynthesisVoice.speechVoices()
+		x = [ self._toVoice(NSSpeechSynthesizer.attributesForVoice_(voices.o    bjectAtIndex_(i)))
+							for i in range(voices.count()) ]
+			self.voices = x
+		return x
+		
+	def isSpeaking(self):
+		return self._tts.isSpeaking()
+
+	def destroy(self):
+		self._tts.delegate = None
+		del self._tts
+		self._tts = None
+
+    def pre_command(self, sentence):
+        return sentence.sentence_id, sentence
+
+    def command(self, pos, sentence):
+        # text = sentence.text
+        # self.set_type_voice(sentence)
+        # print('command():', pos, text, len(text))
+        # self._tts.startSpeakingString_(text)
+		self.speak_sentence(sentence)
 
 	def set_stop_period(self):
 		r = 1.0 / float(self.rate)
@@ -77,57 +117,37 @@ class SpeechDriver:
 			self._completed = False
 		self._tts.stopSpeakingAtBoundary()
 
-	def say(self, text):
-		self._proxy.setBusy(True)
-		self._completed = True
-		self.sentences += text_to_sentences(text)
+    def nss2s(self, nsobj):
+        x = nsobj.UTF8String()
+        if isinstance(x, str):
+            return x
+        return x.decode('utf-8')
+
+    def _toVoice(self, attr):
+        try:
+            lang = self.nss2s(attr.valueForKey_('VoiceLocaleIdentifier'))
+        except KeyError:
+            lang = self.nss2s(attr.valueForKey_('VoiceLanguage'))
+        return Voice(self.nss2s(attr.valueForKey_('VoiceIdentifier')),
+                        self.nss2s(attr.valueForKey_('VoiceName')),
+                     [lang], attr.valueForKey_('VoiceGender'),
+                     attr.valueForKey_('VoiceAge').intValue())
+
 
 	def set_utterances_by_sentence(self, utterance, sentence):
 		if sentence.dialog:
 			utterance.pitchModifier = 1.25
 		else:
 			utterance.pitchModifier = 1.0
-		locale = get_local_by_language(sentence.lang)
+		locale = language_by_lang(sentence.lang)
 		voice = AVSpeechSynthesisVoice.voiceWithLanguage(locale)
 		utterance.voice = voice
 		utterance.rate = self.rate
-
-	def isBusy(self):
-		if self.speaking_sentence:
-			return True
-		else:
-			return False
 
 	def speak_sentence(self, sentence):
 		utterance = AVSpeechUtterance.alloc().initWithString(sentence.text)
 		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance(utterance)
-
-	def destroy(self):
-		self._tts.setDelegate_(None)
-		del self._tts
-
-	def startLoop(self):
-		self._proxy.notify('started-utterance')
-		speak_next_sentence()
-
-	def speak_next_sentence(self):
-		if len(self.sentences) > 0:
-			self.speaking_sentence = self.sentences.pop(0)
-			self.speak_sentence(self.speaking_sentence)
-		else:
-			sself.speaking_sentence = None
-			self._completed = True
-			self._proxy.notify('finished-utterance', 
-								completed=self._completed)
-			self._proxy.setBusy(False)
-			
-	def endLoop(self):
-		self.speaking_sentence = None
-
-	def iterate(self):
-		self._proxy.setBusy(False)
-		yield
 
 	def getProperty(self, name):
 		if name == 'voices':
