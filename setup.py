@@ -3,9 +3,8 @@ try:
 except ImportError:
 	from distutils.core import setup
 
-# from ios_tts.version import __version__
-#with open('README.rst', 'r') as f:
-#	long_description = f.read()
+with open('README.md', 'r') as f:
+	long_description = f.read()
 
 with open('ios_tts/version.py', 'r') as f:
 	x = f.read()
@@ -17,8 +16,7 @@ setup(
 	name='ios_tts',
 	packages=['ios_tts'],
 	version=version,
-	description='a pyttsx3 driver for ios device, it use AVFoundation.AVSpeechSynthesizer',
-	long_description='',
+	description='a unitts driver for ios device, it use AVFoundation.AVSpeechSynthesizer',
 	summary='pyttsx3 driver for ios device',
 	author='Yu Moqing',
 	url='https://github.com/yumoqing/ios_tts',
