@@ -67,7 +67,7 @@ class IOSSpeechDriver(BaseDriver):
 
 	def get_voice_by_lang(self, lang):
 		for v in self.voices:
-			x = map(lambda:x lang==x[:len(lang)], v.languages)
+			x = map(lambda x:lang==x[:len(lang)], v.languages)
 			if True in x:
 				default_language = language_by_lang(lang)
 				if default_voice is None:
