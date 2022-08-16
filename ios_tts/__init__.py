@@ -64,6 +64,7 @@ class IOSSpeechDriver(BaseDriver):
 		self.voice = None
 		print(f'IOSTTS driver version {__version__}')
 		self.speaking_sentence = None
+		self.get_voices()
 
 	def get_voice_by_lang(self, lang):
 		for v in self.voices:
@@ -77,10 +78,9 @@ class IOSSpeechDriver(BaseDriver):
 		raise Exception(f'{lang} is not supported language')
 			
 	def get_voices(self):
-		langs = AVSpeechSynthesisVoice.speechVoices()
-		x = [ self._toVoice(NSSpeechSynthesizer.attributesForVoice_(voices.o    bjectAtIndex_(i)))
-							for i in range(voices.count()) ]
-			self.voices = x
+		voices = AVSpeechSynthesisVoice.speechVoices()
+		x = [ self._toVoice(v) for v in voices ]
+		self.voices = x
 		return x
 		
 	def isSpeaking(self):
@@ -151,7 +151,7 @@ class IOSSpeechDriver(BaseDriver):
 
 	def getProperty(self, name):
 		if name == 'voices':
-			return self.get_all_language()
+			return self.voices
 		elif name == 'voice':
 			return self.voice
 		elif name == 'rate':
@@ -176,10 +176,6 @@ class IOSSpeechDriver(BaseDriver):
 			print("Pitch adjustment not supported when using NSSS")
 		else:
 			raise KeyError('unknown property %s' % name)
-
-	def get_all_language(self):
-		langs = AVSpeechSynthesisVoice.speechVoices()
-		return langs
 
 	def save_to_file(self, text, filename):
 		url = NSURL.fileURLWithPath_(filename)
