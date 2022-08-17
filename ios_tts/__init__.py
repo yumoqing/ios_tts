@@ -77,9 +77,20 @@ class IOSSpeechDriver(BaseDriver):
 					return v.id
 		raise Exception(f'{lang} is not supported language')
 			
+	def _toVoice(voice):
+		id = voice.identifier
+		name = voice.name
+		v = Voice(id)
+		v.name = voice.name
+		v.gender = voice.gender
+		v.languages = voice.language
+		return v
+
 	def get_voices(self):
 		voices = AVSpeechSynthesisVoice.speechVoices()
-		x = [ self._toVoice(v) for v in voices ]
+		x = [ self._toVoice(v) for v in \
+					[voices.objectAtIndex_(i) \
+							for i in range(voices.count()) ] ]
 		self.voices = x
 		return x
 		
