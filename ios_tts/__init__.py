@@ -78,6 +78,7 @@ class IOSSpeechDriver(BaseDriver):
 		raise Exception(f'{lang} is not supported language')
 			
 	def _toVoice(voice):
+		print('_toVoice(): voice:', dir(voice))
 		id = voice.identifier
 		name = voice.name
 		v = Voice(id)
