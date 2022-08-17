@@ -79,12 +79,11 @@ class IOSSpeechDriver(BaseDriver):
 			
 	def _toVoice(voice):
 		print('_toVoice(): voice:', dir(voice))
-		id = voice.identifier
-		name = voice.name
+		id = voice.valueForKey_('identifier')
 		v = Voice(id)
-		v.name = voice.name
-		v.gender = voice.gender
-		v.languages = voice.language
+		v.name = voice.valueForKey_('name')
+		v.gender = voice.valueForKey_('gender')
+		v.languages = [voice.valueForKey_('language')]
 		return v
 
 	def get_voices(self):
