@@ -91,14 +91,10 @@ class IOSSpeechDriver(BaseDriver):
 		del self._tts
 		self._tts = None
 
-    def pre_command(self, sentence):
-        return sentence.sentence_id, sentence
+	def pre_command(self, sentence):
+		return sentence.sentence_id, sentence
 
-    def command(self, pos, sentence):
-        # text = sentence.text
-        # self.set_type_voice(sentence)
-        # print('command():', pos, text, len(text))
-        # self._tts.startSpeakingString_(text)
+	def command(self, pos, sentence):
 		self.speak_sentence(sentence)
 
 	def set_stop_period(self):
@@ -117,21 +113,21 @@ class IOSSpeechDriver(BaseDriver):
 			self._completed = False
 		self._tts.stopSpeakingAtBoundary()
 
-    def nss2s(self, nsobj):
-        x = nsobj.UTF8String()
-        if isinstance(x, str):
-            return x
-        return x.decode('utf-8')
+	def nss2s(self, nsobj):
+		x = nsobj.UTF8String()
+		if isinstance(x, str):
+			return x
+		return x.decode('utf-8')
 
-    def _toVoice(self, attr):
-        try:
-            lang = self.nss2s(attr.valueForKey_('VoiceLocaleIdentifier'))
-        except KeyError:
-            lang = self.nss2s(attr.valueForKey_('VoiceLanguage'))
-        return Voice(self.nss2s(attr.valueForKey_('VoiceIdentifier')),
-                        self.nss2s(attr.valueForKey_('VoiceName')),
-                     [lang], attr.valueForKey_('VoiceGender'),
-                     attr.valueForKey_('VoiceAge').intValue())
+	def _toVoice(self, attr):
+		try:
+			lang = self.nss2s(attr.valueForKey_('VoiceLocaleIdentifier'))
+		except KeyError:
+			lang = self.nss2s(attr.valueForKey_('VoiceLanguage'))
+		return Voice(self.nss2s(attr.valueForKey_('VoiceIdentifier')),
+						self.nss2s(attr.valueForKey_('VoiceName')),
+					 [lang], attr.valueForKey_('VoiceGender'),
+					 attr.valueForKey_('VoiceAge').intValue())
 
 
 	def set_utterances_by_sentence(self, utterance, sentence):
