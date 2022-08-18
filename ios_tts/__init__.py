@@ -64,6 +64,7 @@ class IOSSpeechDriver(BaseDriver):
 		self.set_stop_period()
 		self.voice = None
 		print(f'IOSTTS driver version {__version__}')
+		print(f'self._tts=', dir(self._tts))
 		self.speaking_sentence = None
 		self.get_voices()
 
