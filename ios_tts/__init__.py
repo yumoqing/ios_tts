@@ -13,6 +13,7 @@ NSObject = autoclass('NSObject')
 AVSpeechSynthesizer = autoclass('AVSpeechSynthesizer')
 AVSpeechUtterance = autoclass('AVSpeechUtterance')
 AVSpeechSynthesisVoice = autoclass('AVSpeechSynthesisVoice')
+AVSpeechSynthesizerDelegate = autoclass('AVSpeechSynthesizerDelegate')
 NSURL = autoclass('NSURL')
 
 from text2sentences import text_to_sentences
@@ -177,27 +178,27 @@ class IOSSpeechDriver(BaseDriver):
 		url = NSURL.fileURLWithPath_(filename)
 		self._tts.startSpeakingString_toURL_(text, url)
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didCancelSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didContinueSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didPauseSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didStartSpeechUtterance_(self, *args):
 		print('args=', args)
 		return
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didFinishSpeechUtterance_(self, *args):
 		print('args=', args)
 		if self.speaking_sentence.semi_sentenece:
@@ -207,7 +208,7 @@ class IOSSpeechDriver(BaseDriver):
 		self.speak_next_utterance()
 		return
 
-	@protocol('AVSpeechSynthesisDelegate')
+	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_willSpeakRangeOfSpeechString_(self, *args):
 		print('args=', args)
 
