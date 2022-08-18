@@ -197,7 +197,6 @@ class IOSSpeechDriver(BaseDriver):
 	def speechSynthesizer_didPause_(self, *args):
 		print('didPause_(): args=', args)
 		return
-	"""
 
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didFinish_(self, *args):
@@ -212,4 +211,5 @@ class IOSSpeechDriver(BaseDriver):
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_willSpeakRangeOfSpeech_utterance_(self, *args):
 		print('willSpeakRangeOfSpeech_(): args=', args)
+	"""
 
