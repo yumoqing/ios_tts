@@ -4,7 +4,6 @@ from unitts.voice import Voice
 from pyobjus import autoclass, protocol
 from pyobjus.dylib_manager import load_framework, INCLUDE
 load_framework(INCLUDE.AVFoundation)
-load_framework('/System/Library/Frameworks/AppKit.framework')
 load_framework('/System/Library/Frameworks/Foundation.framework')
 NSTimer = autoclass('NSTimer')
 NSString = autoclass('NSString')
