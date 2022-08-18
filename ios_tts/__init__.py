@@ -187,7 +187,6 @@ class IOSSpeechDriver(BaseDriver):
 	def speechSynthesizer_didCancel_(self, *args):
 		print('didCancel_(): args=', args)
 		return
-	"""
 
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didContinue_(self, *args):
@@ -198,6 +197,7 @@ class IOSSpeechDriver(BaseDriver):
 	def speechSynthesizer_didPause_(self, *args):
 		print('didPause_(): args=', args)
 		return
+	"""
 
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didFinish_(self, *args):
