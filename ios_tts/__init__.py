@@ -13,7 +13,6 @@ NSObject = autoclass('NSObject')
 AVSpeechSynthesizer = autoclass('AVSpeechSynthesizer')
 AVSpeechUtterance = autoclass('AVSpeechUtterance')
 AVSpeechSynthesisVoice = autoclass('AVSpeechSynthesisVoice')
-AVSpeechSynthesizerDelegate = autoclass('AVSpeechSynthesizerDelegate')
 NSURL = autoclass('NSURL')
 
 from text2sentences import text_to_sentences
