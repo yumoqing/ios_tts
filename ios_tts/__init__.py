@@ -136,7 +136,7 @@ class IOSSpeechDriver(BaseDriver):
 		else:
 			utterance.pitchMultiplier = 1.0
 		locale = language_by_lang(sentence.lang)
-		voice = AVSpeechSynthesisVoice.voiceWithLanguage(locale)
+		voice = AVSpeechSynthesisVoice.alloc().init(locale)
 		utterance.voice = voice
 		utterance.rate = self.rate
 
