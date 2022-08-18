@@ -56,6 +56,7 @@ class IOSSpeechDriver(BaseDriver):
 	def __init__(self, proxy, **kw):
 		super().__init__(proxy)
 		self._tts = AVSpeechSynthesizer.alloc().init()
+		self._tts1 = AVSpeechSynthesizer()
 		# self._tts.delegate = self
 		self.rate = 200
 		self.volume = 1
@@ -64,6 +65,7 @@ class IOSSpeechDriver(BaseDriver):
 		self.set_stop_period()
 		self.voice = None
 		print(f'IOSTTS driver version {__version__}')
+		print('self._tts1=', dir(self._tts1))
 		self.speaking_sentence = None
 		self.get_voices()
 
@@ -145,6 +147,7 @@ class IOSSpeechDriver(BaseDriver):
 		utterance = AVSpeechUtterance.alloc().init(sentence.text)
 		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance_(utterance)
+		self._tts1.speak(utterance)
 		print('speak_sentence() finished')
 
 	def getProperty(self, name):
