@@ -50,6 +50,7 @@ def language_by_lang(lang):
 	return locales.get(lang, None)
 
 def buildDriver(proxy, **kw):
+	print(f'ios_tts version {__version__}')
 	return IOSSpeechDriver(proxy, **kw)
 
 class IOSSpeechDriver(BaseDriver):
