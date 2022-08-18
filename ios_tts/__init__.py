@@ -132,9 +132,9 @@ class IOSSpeechDriver(BaseDriver):
 
 	def set_utterances_by_sentence(self, utterance, sentence):
 		if sentence.dialog:
-			utterance.pitchModifier = 1.25
+			utterance.pitchMultiplier = 1.25
 		else:
-			utterance.pitchModifier = 1.0
+			utterance.pitchMultiplier = 1.0
 		locale = language_by_lang(sentence.lang)
 		voice = AVSpeechSynthesisVoice.voiceWithLanguage(locale)
 		utterance.voice = voice
