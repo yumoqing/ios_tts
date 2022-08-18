@@ -56,7 +56,7 @@ class IOSSpeechDriver(BaseDriver):
 	def __init__(self, proxy, **kw):
 		super().__init__(proxy)
 		self._tts = AVSpeechSynthesizer.alloc().init()
-		self._tts.delegate = self
+		# self._tts.delegate = self
 		self.rate = 200
 		self.volume = 1
 		self._completed = True
