@@ -64,7 +64,6 @@ class IOSSpeechDriver(BaseDriver):
 		self.set_stop_period()
 		self.voice = None
 		print(f'IOSTTS driver version {__version__}')
-		print(f'self._tts=', dir(self._tts))
 		self.speaking_sentence = None
 		self.get_voices()
 
@@ -107,6 +106,7 @@ class IOSSpeechDriver(BaseDriver):
 		return sentence.sentence_id, sentence
 		
 	def command(self, pos, sentence):
+		print('command()', sentence.text)
 		self.speak_sentence(sentence)
 
 	def set_stop_period(self):
@@ -145,6 +145,7 @@ class IOSSpeechDriver(BaseDriver):
 		utterance = AVSpeechUtterance.alloc().init(sentence.text)
 		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance_(utterance)
+		print('speak_sentence() finished')
 
 	def getProperty(self, name):
 		if name == 'voices':
