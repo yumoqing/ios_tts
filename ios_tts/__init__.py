@@ -177,12 +177,12 @@ class IOSSpeechDriver(BaseDriver):
 		url = NSURL.fileURLWithPath_(filename)
 		self._tts.startSpeakingString_toURL_(text, url)
 
+	"""
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didStart_(self, *args):
 		print('didStart_(): args=', args)
 		return
 
-	"""
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didCancel_(self, *args):
 		print('didCancel_(): args=', args)
