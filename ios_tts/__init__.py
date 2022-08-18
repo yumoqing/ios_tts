@@ -79,7 +79,6 @@ class IOSSpeechDriver(BaseDriver):
 		raise Exception(f'{lang} is not supported language')
 			
 	def _toVoice(self, voice):
-		print('_toVoice(): voice:', dir(voice))
 		id = voice.valueForKey_('identifier')
 		v = Voice(id)
 		v.name = voice.valueForKey_('name')
@@ -179,28 +178,28 @@ class IOSSpeechDriver(BaseDriver):
 		self._tts.startSpeakingString_toURL_(text, url)
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_didCancelSpeechUtterance_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_didStart_(self, *args):
+		print('didStart_(): args=', args)
 		return
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_didContinueSpeechUtterance_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_didCancel_(self, *args):
+		print('didCancel_(): args=', args)
 		return
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_didPauseSpeechUtterance_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_didContinue_(self, *args):
+		print('didContinue_(): args=', args)
 		return
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_didStartSpeechUtterance_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_didPause_(self, *args):
+		print('didPause_(): args=', args)
 		return
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_didFinishSpeechUtterance_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_didFinish_(self, *args):
+		print('didFinish_(): args=', args)
 		if self.speaking_sentence.semi_sentenece:
 			time.sleep(self.simi_stop_period)
 		else:
@@ -209,6 +208,6 @@ class IOSSpeechDriver(BaseDriver):
 		return
 
 	@protocol('AVSpeechSynthesizerDelegate')
-	def speechSynthesizer_willSpeakRangeOfSpeechString_(self, *args):
-		print('args=', args)
+	def speechSynthesizer_willSpeakRangeOfSpeech_utterance_(self, *args):
+		print('willSpeakRangeOfSpeech_(): args=', args)
 
