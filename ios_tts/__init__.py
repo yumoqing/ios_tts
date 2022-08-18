@@ -130,17 +130,6 @@ class IOSSpeechDriver(BaseDriver):
 			return x
 		return x.decode('utf-8')
 
-	def _toVoice(self, attr):
-		try:
-			lang = self.nss2s(attr.valueForKey_('VoiceLocaleIdentifier'))
-		except KeyError:
-			lang = self.nss2s(attr.valueForKey_('VoiceLanguage'))
-		return Voice(self.nss2s(attr.valueForKey_('VoiceIdentifier')),
-						self.nss2s(attr.valueForKey_('VoiceName')),
-					 [lang], attr.valueForKey_('VoiceGender'),
-					 attr.valueForKey_('VoiceAge').intValue())
-
-
 	def set_utterances_by_sentence(self, utterance, sentence):
 		if sentence.dialog:
 			utterance.pitchModifier = 1.25
