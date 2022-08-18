@@ -144,7 +144,7 @@ class IOSSpeechDriver(BaseDriver):
 	def speak_sentence(self, sentence):
 		utterance = AVSpeechUtterance.alloc().init(sentence.text)
 		self.set_utterances_by_sentence(utterance, sentence)
-		self._tts.speak_(utterance)
+		self._tts.speak(utterance)
 
 	def getProperty(self, name):
 		if name == 'voices':
