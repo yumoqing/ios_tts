@@ -17,7 +17,6 @@ setup(
 	packages=['ios_tts'],
 	version=version,
 	description='a unitts driver for ios device, it use AVFoundation.AVSpeechSynthesizer',
-	summary='pyttsx3 driver for ios device',
 	author='Yu Moqing',
 	url='https://github.com/yumoqing/ios_tts',
 	long_description=long_description,
