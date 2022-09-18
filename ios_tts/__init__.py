@@ -115,10 +115,10 @@ class IOSSpeechDriver(BaseDriver):
 		self.semi_stop_period = 1.5 * r
 		self.sentence_stop_period = 3.0 * r
 
-	def pause(self):
+	def pauseplay(self):
 		self._tts.pauseSpeakingAtBoundary()
 
-	def continue(self):
+	def continueplay(self):
 		self._tts.continueSpeaking()
 
 	def stop(self):
