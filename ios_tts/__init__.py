@@ -55,7 +55,7 @@ class IOSSpeechDriver(BaseDriver):
 	def __init__(self, proxy, **kw):
 		super().__init__(proxy)
 		self._tts = AVSpeechSynthesizer.alloc().init()
-		# self._tts.delegate = self
+		self._tts.delegate = self
 		self.volume = 1
 		self._completed = True
 		self.rate = 180
@@ -180,7 +180,6 @@ class IOSSpeechDriver(BaseDriver):
 		url = NSURL.fileURLWithPath_(filename)
 		self._tts.startSpeakingString_toURL_(text, url)
 
-	"""
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_didStart_(self, *args):
 		print('didStart_(): args=', args)
@@ -214,5 +213,4 @@ class IOSSpeechDriver(BaseDriver):
 	@protocol('AVSpeechSynthesizerDelegate')
 	def speechSynthesizer_willSpeakRangeOfSpeech_utterance_(self, *args):
 		print('willSpeakRangeOfSpeech_(): args=', args)
-	"""
 
