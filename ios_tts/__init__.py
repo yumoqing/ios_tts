@@ -140,7 +140,7 @@ class IOSSpeechDriver(BaseDriver):
 		locale = language_by_lang(sentence.lang)
 		voice = AVSpeechSynthesisVoice.voiceWithLanguage_(objc_str(locale))
 		utterance.voice = voice
-		utterance.rate = self.rate
+		# utterance.rate = self.rate
 
 	def speak_sentence(self, sentence):
 		utterance = AVSpeechUtterance.speechUtteranceWithString_(objc_str(sentence.text))
