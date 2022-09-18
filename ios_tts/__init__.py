@@ -104,7 +104,7 @@ class IOSSpeechDriver(BaseDriver):
 		self._tts = None
 		
 	def pre_command(self, sentence):
-		return sentence.pos, sentence
+		return sentence.start_pos, sentence
 		
 	def command(self, pos, sentence):
 		print('command()', sentence.text)
