@@ -143,7 +143,7 @@ class IOSSpeechDriver(BaseDriver):
 		utterance.rate = self.rate
 
 	def speak_sentence(self, sentence):
-		utterance = AVSpeechUtterance.alloc().init(sentence.text)
+		utterance = AVSpeechUtterance.speechUtteranceWithString_(objc_str(sentence.text))
 		self.set_utterances_by_sentence(utterance, sentence)
 		self._tts.speakUtterance_(utterance)
 		print('speak_sentence() finished')
