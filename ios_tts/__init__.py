@@ -1,7 +1,7 @@
 import time
 from unitts.basedriver import BaseDriver
 from unitts.voice import Voice
-from pyobjus import autoclass, protocol
+from pyobjus import autoclass, protocol, objc_str
 from pyobjus.dylib_manager import load_framework, INCLUDE
 load_framework(INCLUDE.AVFoundation)
 load_framework('/System/Library/Frameworks/Foundation.framework')
@@ -56,7 +56,6 @@ class IOSSpeechDriver(BaseDriver):
 		super().__init__(proxy)
 		self._tts = AVSpeechSynthesizer.alloc().init()
 		# self._tts.delegate = self
-		self.rate = 200
 		self.volume = 1
 		self._completed = True
 		self.rate = 180
@@ -65,6 +64,9 @@ class IOSSpeechDriver(BaseDriver):
 		print(f'IOSTTS driver version {__version__}')
 		self.speaking_sentence = None
 		self.get_voices()
+
+	def set_voice(self, lang):
+		pass
 
 	def get_voice_by_lang(self, lang):
 		for v in self.voices:
@@ -116,7 +118,7 @@ class IOSSpeechDriver(BaseDriver):
 	def pause(self):
 		self._tts.pauseSpeakingAtBoundary()
 
-	def contineu(self):
+	def continue(self):
 		self._tts.continueSpeaking()
 
 	def stop(self):
@@ -136,7 +138,7 @@ class IOSSpeechDriver(BaseDriver):
 		else:
 			utterance.pitchMultiplier = 1.0
 		locale = language_by_lang(sentence.lang)
-		voice = AVSpeechSynthesisVoice.alloc().init(locale)
+		voice = AVSpeechSynthesisVoice.voiceWithLanguage_(objc_str(locale))
 		utterance.voice = voice
 		utterance.rate = self.rate
 
